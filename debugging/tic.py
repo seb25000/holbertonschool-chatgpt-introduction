@@ -1,83 +1,61 @@
+#!/usr/bin/python3
+
 def print_board(board):
-    """Affiche le plateau de jeu."""
     for row in board:
         print(" | ".join(row))
         print("-" * 5)
 
-
 def check_winner(board):
-    """Vérifie si un joueur a gagné."""
-    # Vérifie les lignes
     for row in board:
         if row.count(row[0]) == len(row) and row[0] != " ":
-            return True
+            return True, row[0]
 
-    # Vérifie les colonnes
     for col in range(len(board[0])):
         if board[0][col] == board[1][col] == board[2][col] and board[0][col] != " ":
-            return True
+            return True, board[0][col]
 
-    # Vérifie les diagonales
     if board[0][0] == board[1][1] == board[2][2] and board[0][0] != " ":
-        return True
+        return True, board[0][0]
+
     if board[0][2] == board[1][1] == board[2][0] and board[0][2] != " ":
-        return True
+        return True, board[0][2]
 
-    return False
+    return False, None
 
-
-def is_board_full(board):
-    """Vérifie si le plateau est plein (match nul)."""
-    for row in board:
-        if " " in row:
-            return False
-    return True
-
+def is_full(board):
+    return all(all(cell != " " for cell in row) for row in board)
 
 def tic_tac_toe():
-    """Logique principale du jeu de tic-tac-toe."""
-    board = [[" "]*3 for _ in range(3)]  # Plateau vide
-    player = "X"  # Le premier joueur commence avec "X"
-
+    board = [[" "]*3 for _ in range(3)]
+    player = "X"
     while True:
         print_board(board)
         try:
-            # Demande les coordonnées du joueur
-            row = int(input(f"Entrez la ligne (0, 1 ou 2) pour le joueur {player}: "))
-            col = int(input(f"Entrez la colonne (0, 1 ou 2) pour le joueur {player}: "))
-
-            # Vérifie si les coordonnées sont valides
-            if row < 0 or row > 2 or col < 0 or col > 2:
-                print("Indices hors limites. Veuillez réessayer.")
-                continue
-
-            # Vérifie si la case est libre
-            if board[row][col] != " ":
-                print("Cette case est déjà prise ! Essayez une autre.")
-                continue
-
-            # Place le symbole du joueur sur le plateau
-            board[row][col] = player
-
-            # Vérifie si le joueur actuel a gagné
-            if check_winner(board):
-                print_board(board)
-                print(f"Le joueur {player} a gagné !")
-                break
-
-            # Vérifie si le plateau est plein (match nul)
-            if is_board_full(board):
-                print_board(board)
-                print("Match nul !")
-                break
-
-            # Change de joueur
-            player = "O" if player == "X" else "X"
-
+            row = int(input("Enter row (0, 1, or 2) for player " + player + ": "))
+            col = int(input("Enter column (0, 1, or 2) for player " + player + ": "))
         except ValueError:
-            print("Entrée invalide. Veuillez entrer un nombre entre 0 et 2.")
+            print("Invalid input. Please enter numeric values between 0 and 2.")
             continue
 
+        if row not in range(3) or col not in range(3):
+            print("Invalid move. Please enter values between 0 and 2.")
+            continue
 
-# Lancement du jeu
+        if board[row][col] != " ":
+            print("That spot is already taken! Try again.")
+            continue
+
+        board[row][col] = player
+        won, winner = check_winner(board)
+        if won:
+            print_board(board)
+            print("Player " + winner + " wins!")
+            break
+        elif is_full(board):
+            print_board(board)
+            print("It's a tie!")
+            break
+
+        player = "O" if player == "X" else "X"
+
 tic_tac_toe()
