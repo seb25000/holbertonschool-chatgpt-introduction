@@ -1,11 +1,6 @@
 #!/usr/bin/python3
 import sys
 
-# Vérifie si des arguments ont été passés
-if len(sys.argv) > 1:
-    print("Liste des arguments :")
-    for i, arg in enumerate(sys.argv):
-        print(f"Argument {i}: {arg}")
-else:
-    print("Aucun argument fourni.")
-
+# Loop through arguments starting from index 1 to skip the script name
+for argument in sys.argv[1:]:
+    print(argument)
